@@ -1,0 +1,54 @@
+A. domain models:
+1. Restaurant: id, name, isOpen
+2. dish: id, name, description, price, cuisine[enum: chinese, continental, northindian, southindian]
+		 availability[admin can set true/false], reviews, avg_rating
+		 
+3. Customer: id, name, email, address
+4. order: id, date, totalPrice, deliveryAddress, deliveryStatus
+
+=== extra models ===
+5. rating
+6. review
+7. address: iner to customer
+
+
+B. relationships:
+
+Restaurant-dish:
+				>> A Restaurant can offer many dishes.
+				>> Every dish is unique to exactly one Restaurant.
+				>> so, 1-<m-or-0>
+				>> bidirectional
+				
+Restaurant-Customer:
+				>> there is no direct relation.
+				>> In case, we need a feature to allow Customers to follow Restaurants, we will need some mapping.
+				
+Restaurant-order:
+				>> no need for any direct mapping.
+				>> order should be related with dish which can be used to find out the restaurant.
+
+dish-Customer:
+				>> A Customer can rate and review a dish.
+				>> one Customer can rate/review many dishes. one dish can have rate/review from many Customers.
+				>> we can achieve this by having seperate Rating and Review entities.
+				>> customer-rating: 1-m, dish-rating:1-m
+					>> unidirectional. customer/dish contains the list of rating/review
+				
+dish-order:
+				>> ASSUMING: each order can have exactly 1 dish only.
+				>> a dish can be part of many orders.
+				>> so, 1-m
+				>> bidirectional
+
+Customer-order:
+				>> a Customer can be associated with many orders.
+				>> every order must be given by exactly 1 Customer.
+				>> so, 1-m
+				>> bidirectional
+				
+
+C. system working:
+		>> currently, we don't support register as restaurant[owner].
+		>> So, restaurant creation and management[dish add/remove, resaurant open/close, order delivery] is the responsibility of admins.
+
