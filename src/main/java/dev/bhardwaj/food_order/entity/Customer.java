@@ -5,6 +5,7 @@ import java.util.List;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,13 +28,14 @@ public class Customer {
 	private String email;
 	@Embedded
 	private Address address;
-	@OneToMany(mappedBy = "customer")
+	
+	@OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
 	private List<Order> orders;
 	
-	@OneToMany
+	@OneToMany(fetch = FetchType.LAZY)
 	private List<Rating> ratingsGiven;
 	
-	@OneToMany
+	@OneToMany(fetch = FetchType.LAZY)
 	private List<Review> reviewsGiven;
 	
 	@NoArgsConstructor
@@ -41,7 +43,7 @@ public class Customer {
 	@Getter
 	@Setter
 	@Embeddable
-	private class Address{
+	public class Address{
 		private String locality;
 		private String city;
 		private String state;

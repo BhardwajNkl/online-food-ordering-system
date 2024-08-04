@@ -34,7 +34,7 @@ public class Order {
 	@ManyToOne
 	private Customer customer;
 	
-	private enum DeliveryStatus{
+	public enum DeliveryStatus{
 		ORDER_RECEIVED,
 		ORDER_ON_THE_WAY,
 		ORDER_DELIVERED

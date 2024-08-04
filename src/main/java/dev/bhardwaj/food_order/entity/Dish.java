@@ -42,7 +42,7 @@ public class Dish {
 	@OneToMany
 	private List<Review> reveiws;
 	
-	private enum Cuisine{
+	public enum Cuisine{
 		CHINESE,
 		CONTINENTAL,
 		NORTH_INDIAN,

@@ -1,6 +1,9 @@
 package dev.bhardwaj.food_order.service;
 
+import dev.bhardwaj.food_order.dto.CreateRatingDto;
+import dev.bhardwaj.food_order.entity.Rating;
+
 public interface RatingService {
-	void createRating();
-	void deleteRating(int id);
+	Rating createRating(CreateRatingDto ratingDto);
+	void deleteRating(long ratingId);
 }

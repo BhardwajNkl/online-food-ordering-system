@@ -21,6 +21,8 @@ public class Review {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
+	private long customerId;
+	private int dishId;
 	private String review;
 	private Timestamp timestamp;
 }

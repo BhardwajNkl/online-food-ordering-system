@@ -20,6 +20,8 @@ public class Rating {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
+	private long customerId;
+	private int dishId;
 	private byte rating; // 1 to 5
 	private Timestamp timeStamp;	
 }
