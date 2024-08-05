@@ -9,11 +9,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UpdateDishDto {
-	private int id;
+public class NewCustomerDto {
 	private String name;
-	private String description;
-	private float price;
-	private boolean available;
-	private String cuisine;
+	private String email;
+	private String locality;
+	private String city;
+	private String state;
+	private String pinCode;
 }

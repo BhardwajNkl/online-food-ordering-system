@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import dev.bhardwaj.food_order.dto.CreateRestaurantDto;
+import dev.bhardwaj.food_order.dto.NewRestaurantDto;
 import dev.bhardwaj.food_order.entity.Restaurant;
 import dev.bhardwaj.food_order.service.RestaurantService;
 

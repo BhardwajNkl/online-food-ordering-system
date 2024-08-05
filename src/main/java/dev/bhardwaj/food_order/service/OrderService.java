@@ -2,14 +2,16 @@ package dev.bhardwaj.food_order.service;
 
 import java.util.List;
 
-import dev.bhardwaj.food_order.dto.CreateOrderDto;
-import dev.bhardwaj.food_order.entity.Order;
+import dev.bhardwaj.food_order.dto.BillDto;
+import dev.bhardwaj.food_order.dto.NewOrderDto;
+import dev.bhardwaj.food_order.dto.OrderDetailsDto;
+import dev.bhardwaj.food_order.dto.OrderDto;
 
 public interface OrderService {
-	Order placeOrder(CreateOrderDto orderDto);
-	Order getOrderDetails(long orderId);
-	void getBill(long orderId);
+	OrderDto placeOrder(NewOrderDto orderDto); // neworder dto
+	OrderDetailsDto getOrderDetails(long orderId);
+	BillDto getBill(long orderId); // bill with customer name
 
-//	List<Order> getOrdersForCustomer(long customerId); // customer has reference to orders list so no need here
-	List<Order> getOrdersForRestaurant(int restaurantId);
+	List<OrderDto> getOrdersForCustomer(long customerId);
+	List<OrderDto> getOrdersForRestaurant(int restaurantId);
 }

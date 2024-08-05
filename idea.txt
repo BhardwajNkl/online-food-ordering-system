@@ -52,3 +52,27 @@ C. system working:
 		>> currently, we don't support register as restaurant[owner].
 		>> So, restaurant creation and management[dish add/remove, resaurant open/close, order delivery] is the responsibility of admins.
 
+================================================
+
+rating/review sould also be connected with customer/dish. work on it and respective details dtos.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

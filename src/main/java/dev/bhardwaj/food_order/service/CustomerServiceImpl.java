@@ -1,65 +1,45 @@
 package dev.bhardwaj.food_order.service;
 
-import dev.bhardwaj.food_order.dto.DtoToEntityMapper;
-
-import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import dev.bhardwaj.food_order.dto.CreateCustomerDto;
-import dev.bhardwaj.food_order.dto.CreateOrderDto;
-import dev.bhardwaj.food_order.dto.CreateRatingDto;
-import dev.bhardwaj.food_order.dto.CreateReviewDto;
+import dev.bhardwaj.food_order.dto.CustomerDetailsDto;
+import dev.bhardwaj.food_order.dto.CustomerDto;
+import dev.bhardwaj.food_order.dto.NewCustomerDto;
 import dev.bhardwaj.food_order.dto.UpdateCustomerDto;
+import dev.bhardwaj.food_order.dto.converter.CustomerConverter;
 import dev.bhardwaj.food_order.entity.Customer;
-import dev.bhardwaj.food_order.entity.Customer.Address;
-import dev.bhardwaj.food_order.entity.Order;
-import dev.bhardwaj.food_order.entity.Rating;
-import dev.bhardwaj.food_order.entity.Review;
 import dev.bhardwaj.food_order.repository.CustomerRepository;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
 	
 	private final CustomerRepository customerRepository;
-	private final OrderService orderService;
-	private final RatingService ratingService;
-	private final ReviewService reviewService;
 	
-	private final DtoToEntityMapper dtoToEntityMapper;
+	@Autowired
+	private CustomerConverter customerConverter;
 	
-	public CustomerServiceImpl(CustomerRepository customerRepository,
-			OrderService orderService,
-			RatingService ratingService,
-			ReviewService reviewService,
-			DtoToEntityMapper dtoToEntityMapper) {
+	
+	public CustomerServiceImpl(CustomerRepository customerRepository) {
 		this.customerRepository = customerRepository;
-		this.orderService = orderService;
-		this.ratingService = ratingService;
-		this.reviewService = reviewService;
-		this.dtoToEntityMapper = dtoToEntityMapper;
 	}
 
 	@Override
-	public Customer createCustomer(CreateCustomerDto customerDto) {
-		Customer customer =dtoToEntityMapper.customerDtoToEntity(customerDto);
-		return customerRepository.save(customer);
+	public CustomerDto createCustomer(NewCustomerDto customerDto) {
+		Customer customer = customerConverter.toEntity(customerDto);
+		Customer createdCustomer = customerRepository.save(customer);
+	
+		return customerConverter.toDto(createdCustomer, CustomerDto.class);
 	}
 
 	@Override
-	public Customer updateCustomerDetails(UpdateCustomerDto customerDto) {
-		Customer customer = customerRepository.findById(customerDto.getId())
-				.orElseThrow(()->new RuntimeException("Customer doe not exist!"));
+	public CustomerDto updateCustomerDetails(UpdateCustomerDto customerDto) {
 		
-		customer.setName(customerDto.getName());
-		customer.setEmail(customer.getEmail());
-		Address address = customer.getAddress();
-		address.setLocality(customerDto.getLocality());
-		address.setCity(customerDto.getCity());
-		address.setState(customerDto.getState());
-		address.setPinCode(customerDto.getPinCode());
-		customer.setAddress(address);
-		return customerRepository.save(customer);
+		Customer updatedCustomer = customerConverter.toEntity(customerDto);
+		
+		Customer savedUpdatedCustomer = customerRepository.save(updatedCustomer);
+		
+		return customerConverter.toDto(savedUpdatedCustomer, CustomerDto.class);
 	}
 
 	@Override
@@ -68,37 +48,23 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Customer getCustomerDetails(long customerId) {
-		return customerRepository.findById(customerId)
+	public CustomerDetailsDto getCustomerDetails(long customerId) {
+		Customer customer = customerRepository.findById(customerId)
 				.orElseThrow(()->new RuntimeException("Customer doe not exist!"));
-	}
-
-	@Override
-	public void login() {
+		
+		return customerConverter.toDto(customer, CustomerDetailsDto.class);
 		
 	}
 
+//	@Override
+//	public Customer getCustomer(long customerId) {
+//		return customerRepository.findById(customerId)
+//				.orElseThrow(()->new RuntimeException("Customer doe not exist!"));
+//	}
+	
 	@Override
-	public Order placeOrder(CreateOrderDto orderDto) {
-		return orderService.placeOrder(orderDto);
-	}
-
-
-	@Override
-	public Rating addRating(CreateRatingDto ratingDto) {
-		return ratingService.createRating(ratingDto);
-	}
-
-	@Override
-	public Review addReview(CreateReviewDto reviwDto) {
-		return reviewService.createReview(reviwDto);
-	}
-
-	@Override
-	public List<Order> getOrdersForCustomer(long customerId) {
-		Customer customer = customerRepository.findById(customerId)
-				.orElseThrow(()->new RuntimeException("Customer doe not exist!"));
-		return customer.getOrders();
+	public void login() {
+		
 	}
 
 }

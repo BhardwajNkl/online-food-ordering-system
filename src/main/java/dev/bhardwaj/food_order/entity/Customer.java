@@ -38,12 +38,12 @@ public class Customer {
 	@OneToMany(fetch = FetchType.LAZY)
 	private List<Review> reviewsGiven;
 	
+	@Embeddable
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@Getter
 	@Setter
-	@Embeddable
-	public class Address{
+	public static class Address{
 		private String locality;
 		private String city;
 		private String state;

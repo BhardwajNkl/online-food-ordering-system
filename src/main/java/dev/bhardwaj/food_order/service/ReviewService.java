@@ -1,9 +1,15 @@
 package dev.bhardwaj.food_order.service;
 
-import dev.bhardwaj.food_order.dto.CreateReviewDto;
-import dev.bhardwaj.food_order.entity.Review;
+import java.util.List;
+
+import dev.bhardwaj.food_order.dto.NewReviewDto;
+import dev.bhardwaj.food_order.dto.ReviewDetailsDto;
+import dev.bhardwaj.food_order.dto.ReviewDto;
 
 public interface ReviewService {
-	Review createReview(CreateReviewDto reviewDto);
-	void deleteReview(long reviewId);
+	ReviewDto createReview(NewReviewDto reviewDto);
+//	void deleteReview(long reviewId);
+	
+	List<ReviewDetailsDto> getReviewsGivenByCustomer(long customerId);
+	List<ReviewDetailsDto> getReviewsForDish(int dishId);
 }

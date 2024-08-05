@@ -1,5 +1,7 @@
 package dev.bhardwaj.food_order.dto;
 
+import java.sql.Timestamp;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,11 +11,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UpdateDishDto {
-	private int id;
-	private String name;
-	private String description;
-	private float price;
-	private boolean available;
-	private String cuisine;
+public class RatingDto {
+	private long id;
+	private long customerId;
+	private int dishId;
+	private byte rating; // 1 to 5
+	private Timestamp timeStamp;
 }

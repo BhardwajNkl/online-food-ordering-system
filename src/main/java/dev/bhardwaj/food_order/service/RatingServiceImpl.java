@@ -1,9 +1,15 @@
 package dev.bhardwaj.food_order.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import dev.bhardwaj.food_order.dto.CreateRatingDto;
-import dev.bhardwaj.food_order.dto.DtoToEntityMapper;
+import dev.bhardwaj.food_order.dto.NewRatingDto;
+import dev.bhardwaj.food_order.dto.RatingDetailsDto;
+import dev.bhardwaj.food_order.dto.RatingDto;
+import dev.bhardwaj.food_order.dto.converter.RatingConverter;
 import dev.bhardwaj.food_order.entity.Customer;
 import dev.bhardwaj.food_order.entity.Dish;
 import dev.bhardwaj.food_order.entity.Rating;
@@ -17,41 +23,79 @@ public class RatingServiceImpl implements RatingService {
 	private final RatingRepository ratingRepository;
 	private final CustomerRepository customerRepository;
 	private final DishRepository dishRepository;
-	private final DtoToEntityMapper dtoToEntityMapper;
+	
+	@Autowired
+	private RatingConverter ratingConverter;
 	
 	public RatingServiceImpl(RatingRepository ratingRepository,
 			CustomerRepository customerRepository,
-			DishRepository dishRepository,
-			DtoToEntityMapper dtoToEntityMapper) {
+			DishRepository dishRepository) {
 		this.ratingRepository = ratingRepository;
 		this.customerRepository = customerRepository;
 		this.dishRepository = dishRepository;
-		this.dtoToEntityMapper = dtoToEntityMapper;
 	}
 
 	@Override
-	public Rating createRating(CreateRatingDto ratingDto) {
-		Rating rating = dtoToEntityMapper.ratingDtoToEntity(ratingDto);
-		// save this rating for the customer and dish
+	public RatingDto createRating(NewRatingDto ratingDto) {
+		
+		// note: rating can be added to ordered dishes only
 		Customer customer = customerRepository.findById(ratingDto.getCustomerId())
 				.orElseThrow(()->new RuntimeException("Customer does not exist"));
+		
+		boolean customerHasOrderedThisDish = customer.getOrders()
+		.stream()
+		.anyMatch(order->order.getDish().getId()==ratingDto.getDishId());
+		
+		if(!customerHasOrderedThisDish) {
+			throw new RuntimeException("Cannot give rating! Customer has not ordered this dish!");
+		}
+		
+		
+		
+		// now work on actual rating add logic
+		
+		Rating rating = ratingConverter.toEntity(ratingDto);
+		Rating savedRating = ratingRepository.save(rating);
+		
+		// add this rating to customer's ratings given list
+//		Customer customer = customerRepository.findById(ratingDto.getCustomerId())
+//				.orElseThrow(()->new RuntimeException("Customer does not exist"));
 		customer.getRatingsGiven().add(rating);
 		customerRepository.save(customer);
 		
+		// add the rating to dish' ratings list, before adding recalculate average rating
 		Dish dish = dishRepository.findById(ratingDto.getDishId())
 				.orElseThrow(()->new RuntimeException("Dish does not exist"));
+		// also update dish average rating
+		long currentRatingCount = dish.getRatings().size();
+		float currentAverageRating = dish.getAverageRating();
+		float newAverageRating = ((currentAverageRating*currentRatingCount) + rating.getRating())/(currentRatingCount+1);
+		dish.setAverageRating(newAverageRating);
 		dish.getRatings().add(rating);
+		
+		
 		dishRepository.save(dish);
-		
-		
-		// now save this rating and return
-		return ratingRepository.save(rating);
+				
+		return ratingConverter.toDto(savedRating, RatingDto.class);
 	}
 
 	@Override
-	public void deleteRating(long ratingId) {
-		// test that deleting rating should also delete this from the respective customer ratings list and dish ratings list
-		ratingRepository.deleteById(ratingId);
+	public List<RatingDetailsDto> getRatingsGivenByCustomer(long customerId) {
+		Customer customer = customerRepository.findById(customerId)
+				.orElseThrow(()->new RuntimeException("Customer does not exist"));
+		return customer.getRatingsGiven().stream()
+				.map(rating->ratingConverter.toDto(rating, RatingDetailsDto.class))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<RatingDetailsDto> getRatingsForDish(int dishId) {
+		Dish dish = dishRepository.findById(dishId)
+				.orElseThrow(()->new RuntimeException("Dish does not exist"));
+		return dish.getRatings()
+				.stream()
+				.map(rating->ratingConverter.toDto(rating, RatingDetailsDto.class))
+				.collect(Collectors.toList());
 	}
 
 }

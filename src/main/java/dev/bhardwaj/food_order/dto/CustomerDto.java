@@ -1,5 +1,7 @@
 package dev.bhardwaj.food_order.dto;
 
+import dev.bhardwaj.food_order.entity.Customer.Address;
+import jakarta.persistence.Embedded;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,11 +11,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UpdateDishDto {
-	private int id;
+public class CustomerDto {
+	private long id;
 	private String name;
-	private String description;
-	private float price;
-	private boolean available;
-	private String cuisine;
+	private String email;
+	@Embedded
+	private Address address; // expand if needed
 }

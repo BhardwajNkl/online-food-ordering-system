@@ -27,19 +27,19 @@ public class Dish {
 	private String description;
 	private float price;
 	private float averageRating;
-	private boolean avaialability;
+	private boolean available;
 	private Cuisine cuisine;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Restaurant restaurant;
 	
-	@OneToMany(mappedBy = "dish")
+	@OneToMany(mappedBy = "dish", fetch = FetchType.LAZY)
 	private List<Order> orders;
 	
-	@OneToMany
+	@OneToMany(fetch = FetchType.LAZY)
 	private List<Rating> ratings;
 	
-	@OneToMany
+	@OneToMany(fetch = FetchType.LAZY)
 	private List<Review> reveiws;
 	
 	public enum Cuisine{

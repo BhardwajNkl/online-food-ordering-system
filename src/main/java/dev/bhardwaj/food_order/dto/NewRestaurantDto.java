@@ -9,12 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class CreateDishDto {
+public class NewRestaurantDto {
 	private String name;
-	private String description;
-	private float price;
-	private float averageRating;
-	private boolean avaialability;
-	private String cuisine;
-	private int restaurantId;
+	private boolean open;
 }

@@ -2,6 +2,7 @@ package dev.bhardwaj.food_order.entity;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -23,9 +24,9 @@ public class Restaurant {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String name;
-	private boolean isOpen;
+	private boolean open;
 	
-	@OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Dish> dishesOffered;
 	
 }
