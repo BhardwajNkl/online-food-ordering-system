@@ -81,7 +81,7 @@ public class DtoToEntityMapper {
 			order.setDate(dto.getDate());
 			order.setDeliveryAddress(dto.getDeliveryAddress());
 			order.setTotalPrice(dto.getTotalPrice());
-			order.setDeliveryStatus(DeliveryStatus.valueOf(dto.getDeliveryStatus()));
+			order.setDeliveryStatus(DeliveryStatus.valueOf("ORDER_RECEIVED"));
 			return order;
 		};
 		return orderDtoToEntity.apply(orderDto);

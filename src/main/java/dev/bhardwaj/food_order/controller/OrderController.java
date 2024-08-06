@@ -52,4 +52,9 @@ public class OrderController {
 	BillDto getBill(@PathVariable long orderId) {
 		return orderService.getBill(orderId);
 	}
+	
+	@PostMapping("/update-order-delivery-status/{orderId}/{newStatus}")
+	void updateOrderDeliveryStatus(@PathVariable long orderId ,@PathVariable String newStatus) {
+		orderService.updateOrderDeliveryStatus(orderId, newStatus);
+	}
 }

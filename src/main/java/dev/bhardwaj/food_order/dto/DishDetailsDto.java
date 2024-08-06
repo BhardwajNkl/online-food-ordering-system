@@ -23,9 +23,9 @@ public class DishDetailsDto {
 	
 	private RestaurantDto restaurant;
 	
-	private List<OrderDetailsDto> orders;
+//	private List<OrderDetailsDto> orders;
 	
-	private List<RatingDetailsDto> ratings;
+//	private List<RatingDetailsDto> ratings;
 	
 	private List<ReviewDetailsDto> reveiws;
 }

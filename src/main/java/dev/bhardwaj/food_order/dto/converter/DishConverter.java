@@ -120,44 +120,44 @@ public class DishConverter {
 			dishDetailsDto.setName(dish.getName());
 			dishDetailsDto.setPrice(dish.getPrice());
 			
-			List<OrderDetailsDto> orders = dish.getOrders()
-					.stream()
-					.map(
-						order->{
-							return new OrderDetailsDto();
-						}
-						)
-					.collect(Collectors.toList());
+//			List<OrderDetailsDto> orders = dish.getOrders()
+//					.stream()
+//					.map(
+//						order->{
+//							return new OrderDetailsDto();
+//						}
+//						)
+//					.collect(Collectors.toList());
+//			
+//			dishDetailsDto.setOrders(orders);
 			
-			dishDetailsDto.setOrders(orders);
-			
-			List<RatingDetailsDto> ratings = dish.getRatings()
-					.stream()
-					.map(
-						rating->{
-							RatingDetailsDto ratingDetailsDto = new RatingDetailsDto();
-							ratingDetailsDto.setId(rating.getId());
-							ratingDetailsDto.setCustomerId(rating.getCustomerId());
-							ratingDetailsDto.setDishId(rating.getDishId());
-							ratingDetailsDto.setRating(rating.getRating());
-							ratingDetailsDto.setTimeStamp(rating.getTimeStamp());
-							
-							Customer customer = customerRepository
-									.findById(rating.getCustomerId())
-									.orElseThrow(()->new RuntimeException("Customer does not exist!"));
-							Dish dishRated = dishRepository.findById(rating.getDishId())
-									.orElseThrow(()->new RuntimeException("Dish does not exist!"));
-							
-							// convert to dto
-							ratingDetailsDto.setCustomerDto(customerConverter.toDto(customer, CustomerDto.class));
-							ratingDetailsDto.setDishDto(toDto(dishRated, DishDto.class));
-							
-							return ratingDetailsDto;
-						}
-						)
-					.collect(Collectors.toList());
-			
-			dishDetailsDto.setRatings(ratings);
+//			List<RatingDetailsDto> ratings = dish.getRatings()
+//					.stream()
+//					.map(
+//						rating->{
+//							RatingDetailsDto ratingDetailsDto = new RatingDetailsDto();
+//							ratingDetailsDto.setId(rating.getId());
+//							ratingDetailsDto.setCustomerId(rating.getCustomerId());
+//							ratingDetailsDto.setDishId(rating.getDishId());
+//							ratingDetailsDto.setRating(rating.getRating());
+//							ratingDetailsDto.setTimeStamp(rating.getTimeStamp());
+//							
+//							Customer customer = customerRepository
+//									.findById(rating.getCustomerId())
+//									.orElseThrow(()->new RuntimeException("Customer does not exist!"));
+//							Dish dishRated = dishRepository.findById(rating.getDishId())
+//									.orElseThrow(()->new RuntimeException("Dish does not exist!"));
+//							
+//							// convert to dto
+//							ratingDetailsDto.setCustomerDto(customerConverter.toDto(customer, CustomerDto.class));
+//							ratingDetailsDto.setDishDto(toDto(dishRated, DishDto.class));
+//							
+//							return ratingDetailsDto;
+//						}
+//						)
+//					.collect(Collectors.toList());
+//			
+//			dishDetailsDto.setRatings(ratings);
 			
 			List<ReviewDetailsDto> reviews = dish.getReveiws()
 					.stream()

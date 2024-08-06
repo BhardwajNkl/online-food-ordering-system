@@ -38,7 +38,7 @@ public class OrderConverter {
 			NewOrderDto newDto = (NewOrderDto) dto;
 			order.setDate(newDto.getDate());
 			order.setDeliveryAddress(newDto.getDeliveryAddress());
-			order.setDeliveryStatus(DeliveryStatus.valueOf(newDto.getDeliveryStatus()));
+			order.setDeliveryStatus(DeliveryStatus.valueOf("ORDER_RECEIVED"));
 			order.setTotalPrice(newDto.getTotalPrice());
 			
 			// set customer and dish also

@@ -22,7 +22,7 @@ public class CustomerDetailsDto {
 	
 	private List<OrderDto> orders;
 	
-	private List<RatingDetailsDto> ratingsGiven;
+//	private List<RatingDetailsDto> ratingsGiven;
 	
-	private List<ReviewDetailsDto> reviewsGiven;
+//	private List<ReviewDetailsDto> reviewsGiven;
 }

@@ -14,4 +14,6 @@ public interface OrderService {
 
 	List<OrderDto> getOrdersForCustomer(long customerId);
 	List<OrderDto> getOrdersForRestaurant(int restaurantId);
+	
+	void updateOrderDeliveryStatus(long orderId, String newStatus);
 }

@@ -15,7 +15,7 @@ public class NewOrderDto {
 	private LocalDateTime date;
 	private float totalPrice;
 	private String deliveryAddress;
-	private String deliveryStatus;
+//	private String deliveryStatus;
 	
 	private int dishId;
 	

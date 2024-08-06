@@ -14,6 +14,7 @@ import dev.bhardwaj.food_order.dto.BillDto;
 import dev.bhardwaj.food_order.dto.DtoToEntityMapper;
 import dev.bhardwaj.food_order.entity.Customer;
 import dev.bhardwaj.food_order.entity.Order;
+import dev.bhardwaj.food_order.entity.Order.DeliveryStatus;
 import dev.bhardwaj.food_order.repository.CustomerRepository;
 import dev.bhardwaj.food_order.repository.OrderRepository;
 
@@ -95,6 +96,14 @@ public class OrderServiceImpl implements OrderService {
 		billDto.setDishName(order.getDish().getName());
 		
 		return billDto;
+	}
+
+	@Override
+	public void updateOrderDeliveryStatus(long orderId, String newStatus) {
+		Order order = orderRepository.findById(orderId)
+				.orElseThrow(()->new RuntimeException("Order does not exist!"));
+		order.setDeliveryStatus(DeliveryStatus.valueOf(newStatus));
+		orderRepository.save(order);
 	}
 	
 }
