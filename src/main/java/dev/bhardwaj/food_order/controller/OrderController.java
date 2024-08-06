@@ -3,6 +3,7 @@ package dev.bhardwaj.food_order.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,9 +17,11 @@ import dev.bhardwaj.food_order.dto.OrderDetailsDto;
 import dev.bhardwaj.food_order.dto.OrderDto;
 import dev.bhardwaj.food_order.entity.Order;
 import dev.bhardwaj.food_order.service.OrderService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/order")
+@Validated
 public class OrderController {
 	
 	private final OrderService orderService;
@@ -29,7 +32,7 @@ public class OrderController {
 	}
 	
 	@PostMapping("/place-order")
-	OrderDto placeOrder(@RequestBody NewOrderDto orderDto) {
+	OrderDto placeOrder(@Valid @RequestBody NewOrderDto orderDto) {
 		return orderService.placeOrder(orderDto);
 	}
 	

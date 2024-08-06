@@ -2,7 +2,7 @@ package dev.bhardwaj.food_order.controller;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 import dev.bhardwaj.food_order.dto.NewReviewDto;
 import dev.bhardwaj.food_order.dto.ReviewDetailsDto;
 import dev.bhardwaj.food_order.dto.ReviewDto;
-import dev.bhardwaj.food_order.entity.Review;
 import dev.bhardwaj.food_order.service.ReviewService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/review")
+@Validated
 public class ReviewController {
 private final ReviewService reviewService;
 	
@@ -26,7 +27,7 @@ private final ReviewService reviewService;
 	}
 	
 	@PostMapping("/add-review")
-	ReviewDto addReview(@RequestBody NewReviewDto reviewDto) {
+	ReviewDto addReview(@Valid @RequestBody NewReviewDto reviewDto) {
 		return reviewService.createReview(reviewDto);
 	}
 	

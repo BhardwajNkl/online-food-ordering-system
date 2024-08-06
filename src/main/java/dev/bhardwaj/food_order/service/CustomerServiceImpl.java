@@ -15,6 +15,7 @@ import dev.bhardwaj.food_order.dto.converter.CustomerConverter;
 import dev.bhardwaj.food_order.entity.Customer;
 import dev.bhardwaj.food_order.entity.RoleEntity;
 import dev.bhardwaj.food_order.entity.User;
+import dev.bhardwaj.food_order.exception.DoesNotExistException;
 import dev.bhardwaj.food_order.repository.CustomerRepository;
 import dev.bhardwaj.food_order.repository.RoleRepository;
 import dev.bhardwaj.food_order.repository.UserRepository;
@@ -79,7 +80,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public CustomerDetailsDto getCustomerDetails(long customerId) {
 		Customer customer = customerRepository.findById(customerId)
-				.orElseThrow(()->new RuntimeException("Customer doe not exist!"));
+				.orElseThrow(()->new DoesNotExistException("Customer doe not exist!"));
 		
 		return customerConverter.toDto(customer, CustomerDetailsDto.class);
 		

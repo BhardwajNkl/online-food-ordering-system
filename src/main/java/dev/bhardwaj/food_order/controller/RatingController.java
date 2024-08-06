@@ -3,6 +3,7 @@ package dev.bhardwaj.food_order.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,9 +17,11 @@ import dev.bhardwaj.food_order.dto.RatingDetailsDto;
 import dev.bhardwaj.food_order.dto.RatingDto;
 import dev.bhardwaj.food_order.entity.Rating;
 import dev.bhardwaj.food_order.service.RatingService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/rating")
+@Validated
 public class RatingController {
 	
 	private final RatingService ratingService;
@@ -29,7 +32,7 @@ public class RatingController {
 	}
 	
 	@PostMapping("/add-rating")
-	RatingDto addRating(@RequestBody NewRatingDto ratingDto) {
+	RatingDto addRating(@Valid @RequestBody NewRatingDto ratingDto) {
 		return ratingService.createRating(ratingDto);
 	}
 	

@@ -3,6 +3,7 @@ package dev.bhardwaj.food_order.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,9 +19,11 @@ import dev.bhardwaj.food_order.dto.NewDishDto;
 import dev.bhardwaj.food_order.dto.UpdateDishDto;
 import dev.bhardwaj.food_order.entity.Dish;
 import dev.bhardwaj.food_order.service.DishService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/dish")
+@Validated
 public class DishController {
 	
 	private final DishService dishService;
@@ -32,12 +35,12 @@ public class DishController {
 	
 	
 	@PostMapping("/add-dish")
-	DishDto addDish(@RequestBody NewDishDto dishDto) {
+	DishDto addDish(@Valid @RequestBody NewDishDto dishDto) {
 		return dishService.createDish(dishDto);
 	}
 	
 	@PutMapping("/update-dish")
-	DishDto updteDish(@RequestBody UpdateDishDto dishDto) {
+	DishDto updteDish(@Valid @RequestBody UpdateDishDto dishDto) {
 		return dishService.updateDish(dishDto);
 	}
 	

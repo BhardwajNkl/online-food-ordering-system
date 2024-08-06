@@ -1,6 +1,7 @@
 package dev.bhardwaj.food_order.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,9 +14,11 @@ import dev.bhardwaj.food_order.dto.NewRestaurantDto;
 import dev.bhardwaj.food_order.dto.RestaurantDetailsDto;
 import dev.bhardwaj.food_order.dto.RestaurantDto;
 import dev.bhardwaj.food_order.service.RestaurantService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/restaurant")
+@Validated
 public class RestaurantController {
 	
 	private final RestaurantService restaurantService;
@@ -27,7 +30,7 @@ public class RestaurantController {
 	
 	
 	@PostMapping("/create")
-	public RestaurantDto createRestaurant(@RequestBody NewRestaurantDto restaurantDto) {
+	public RestaurantDto createRestaurant(@Valid @RequestBody NewRestaurantDto restaurantDto) {
 		return restaurantService.createRestaurant(restaurantDto);
 	}
 	
