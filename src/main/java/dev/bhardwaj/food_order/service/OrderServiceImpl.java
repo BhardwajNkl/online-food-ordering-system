@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import dev.bhardwaj.food_order.dto.NewOrderDto;
@@ -15,8 +18,10 @@ import dev.bhardwaj.food_order.dto.DtoToEntityMapper;
 import dev.bhardwaj.food_order.entity.Customer;
 import dev.bhardwaj.food_order.entity.Order;
 import dev.bhardwaj.food_order.entity.Order.DeliveryStatus;
+import dev.bhardwaj.food_order.exception.NotAllowedException;
 import dev.bhardwaj.food_order.repository.CustomerRepository;
 import dev.bhardwaj.food_order.repository.OrderRepository;
+import dev.bhardwaj.food_order.security.SecurityUser;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -49,9 +54,30 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public OrderDetailsDto getOrderDetails(long orderId) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		SecurityUser loggedUser = (SecurityUser) authentication.getPrincipal();
 		Order order = orderRepository.findById(orderId)
 				.orElseThrow(()->new RuntimeException("Order does not exist!"));
-		return orderConverter.toDto(order, OrderDetailsDto.class);
+		
+		if (loggedUser.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN_USER"))) {
+	        // admins can access any order details
+			return orderConverter.toDto(order, OrderDetailsDto.class);
+	    } else {
+	        // for customers, we check if the order was made by this particular customer
+	        if (loggedUser.getUser().getCustomer().getId() == order.getCustomer().getId()) {
+				return orderConverter.toDto(order, OrderDetailsDto.class);
+
+	        } else {
+	            throw new NotAllowedException("You can only access your own order details");
+	        }
+	    }
+		
+		
+//		if(loggedUser.getUser().getCustomer().getId()==order.getCustomer().getId()) {
+//			return orderConverter.toDto(order, OrderDetailsDto.class);
+//		} else {
+//			throw new NotAllowedException("You can get order details of your own orders only");
+//		}
 	}
 	
 	@Override
@@ -84,18 +110,39 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Override
 	public BillDto getBill(long orderId) {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		SecurityUser loggedUser = (SecurityUser) authentication.getPrincipal();
 		Order order = orderRepository.findById(orderId)
 				.orElseThrow(()->new RuntimeException("Order does not exist!"));
 		
-		BillDto billDto = new BillDto();
-		billDto.setOrderId(order.getId());
-		billDto.setDate(order.getDate());
-		billDto.setTotalPrice(order.getTotalPrice());
-		billDto.setDeliveryAddress(order.getDeliveryAddress());
-		billDto.setCustomerName(order.getCustomer().getName());
-		billDto.setDishName(order.getDish().getName());
+		if(loggedUser.getUser().getCustomer().getId()==order.getCustomer().getId()) {
+			BillDto billDto = new BillDto();
+			billDto.setOrderId(order.getId());
+			billDto.setDate(order.getDate());
+			billDto.setTotalPrice(order.getTotalPrice());
+			billDto.setDeliveryAddress(order.getDeliveryAddress());
+			billDto.setCustomerName(order.getCustomer().getName());
+			billDto.setDishName(order.getDish().getName());
+			
+			return billDto;
+		} else {
+			throw new NotAllowedException("You can get bill of your own orders only");
+		}
 		
-		return billDto;
+		// need check
+//		Order order = orderRepository.findById(orderId)
+//				.orElseThrow(()->new RuntimeException("Order does not exist!"));
+		
+//		BillDto billDto = new BillDto();
+//		billDto.setOrderId(order.getId());
+//		billDto.setDate(order.getDate());
+//		billDto.setTotalPrice(order.getTotalPrice());
+//		billDto.setDeliveryAddress(order.getDeliveryAddress());
+//		billDto.setCustomerName(order.getCustomer().getName());
+//		billDto.setDishName(order.getDish().getName());
+//		
+//		return billDto;
 	}
 
 	@Override

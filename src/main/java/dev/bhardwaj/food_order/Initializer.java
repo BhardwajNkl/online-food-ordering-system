@@ -54,7 +54,7 @@ public class Initializer implements CommandLineRunner {
 		
 		User admin = new User();
 		admin.setEmail("admin@admin.com");
-		admin.setPassword(passwordEncoder.encode("admin"));
+		admin.setPassword(passwordEncoder.encode("adminadmin"));
 		RoleEntity roles = roleRepository.findByName("ADMIN_USER").get();
         admin.setRoles(Collections.singletonList(roles));
 		admin.setRoles(Arrays.asList(roles));

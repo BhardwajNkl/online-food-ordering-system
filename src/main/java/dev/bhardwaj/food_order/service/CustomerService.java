@@ -15,5 +15,5 @@ public interface CustomerService {
 	void deleteCustomer(long id);
 	CustomerDetailsDto getCustomerDetails(long id);
 	
-	boolean login(LoginDto loginDto);
+	String login(LoginDto loginDto);
 }

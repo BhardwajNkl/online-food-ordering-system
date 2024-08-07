@@ -23,11 +23,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
     
-    @ExceptionHandler(ValidationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> handleCustomValidationException(ValidationException ex) {
-        ErrorResponse errorResponse = new ErrorResponse("BAD_REQUEST", ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(NotAllowedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<ErrorResponse> handleNotAllowedException(NotAllowedException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("NOT_ALLOWED", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
     
     @ExceptionHandler(MethodArgumentNotValidException.class)

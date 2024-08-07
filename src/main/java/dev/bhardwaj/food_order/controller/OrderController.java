@@ -3,6 +3,7 @@ package dev.bhardwaj.food_order.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,8 @@ import dev.bhardwaj.food_order.dto.NewOrderDto;
 import dev.bhardwaj.food_order.dto.OrderDetailsDto;
 import dev.bhardwaj.food_order.dto.OrderDto;
 import dev.bhardwaj.food_order.entity.Order;
+import dev.bhardwaj.food_order.exception.NotAllowedException;
+import dev.bhardwaj.food_order.security.SecurityUser;
 import dev.bhardwaj.food_order.service.OrderService;
 import jakarta.validation.Valid;
 
@@ -42,8 +45,15 @@ public class OrderController {
 	}
 	
 	@GetMapping("/get-orders-for-customer/{customerId}")
-	List<OrderDto> getOrdersForCustomer(@PathVariable long customerId){
-		return orderService.getOrdersForCustomer(customerId);
+	List<OrderDto> getOrdersForCustomer(@PathVariable long customerId, @AuthenticationPrincipal SecurityUser securityUser){
+		if(securityUser.getUser().getCustomer().getId()==customerId) {
+			return orderService.getOrdersForCustomer(customerId);
+
+		} else {
+			throw new NotAllowedException("You can get only your own list of orders");
+		}
+		
+		
 	}
 	
 	@GetMapping("/get-orders-for-restaurant/{restaurantId}")

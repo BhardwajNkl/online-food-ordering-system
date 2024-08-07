@@ -3,6 +3,7 @@ package dev.bhardwaj.food_order.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ import dev.bhardwaj.food_order.dto.DishDto;
 import dev.bhardwaj.food_order.dto.NewDishDto;
 import dev.bhardwaj.food_order.dto.UpdateDishDto;
 import dev.bhardwaj.food_order.entity.Dish;
+import dev.bhardwaj.food_order.security.SecurityUser;
 import dev.bhardwaj.food_order.service.DishService;
 import jakarta.validation.Valid;
 

@@ -3,6 +3,10 @@ package dev.bhardwaj.food_order.service;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +23,8 @@ import dev.bhardwaj.food_order.exception.DoesNotExistException;
 import dev.bhardwaj.food_order.repository.CustomerRepository;
 import dev.bhardwaj.food_order.repository.RoleRepository;
 import dev.bhardwaj.food_order.repository.UserRepository;
+import dev.bhardwaj.food_order.security.JwtUtil;
+import dev.bhardwaj.food_order.security.SecurityUser;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -36,6 +42,12 @@ public class CustomerServiceImpl implements CustomerService {
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private JwtUtil jwtUtil;
 	
 	
 	public CustomerServiceImpl(CustomerRepository customerRepository) {
@@ -70,6 +82,8 @@ public class CustomerServiceImpl implements CustomerService {
 		Customer savedUpdatedCustomer = customerRepository.save(updatedCustomer);
 		
 		return customerConverter.toDto(savedUpdatedCustomer, CustomerDto.class);
+        
+       	
 	}
 
 	@Override
@@ -93,9 +107,17 @@ public class CustomerServiceImpl implements CustomerService {
 //	}
 	
 	@Override
-	public boolean login(LoginDto loginDto) {
-//		User user = userRepository.findByEmail(loginDto.getEmail()).orElse(null);
-		return true;
-	}
+	public String login(LoginDto loginDto) {
+		
+		Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                loginDto.getEmail(),
+                loginDto.getPassword()));
+		
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = jwtUtil.generateToken(authentication);
+        return token;
+
+    }
 
 }
