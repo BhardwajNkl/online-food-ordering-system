@@ -3,6 +3,8 @@ package dev.bhardwaj.food_order.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +18,6 @@ import dev.bhardwaj.food_order.dto.BillDto;
 import dev.bhardwaj.food_order.dto.NewOrderDto;
 import dev.bhardwaj.food_order.dto.OrderDetailsDto;
 import dev.bhardwaj.food_order.dto.OrderDto;
-import dev.bhardwaj.food_order.entity.Order;
 import dev.bhardwaj.food_order.exception.NotAllowedException;
 import dev.bhardwaj.food_order.security.SecurityUser;
 import dev.bhardwaj.food_order.service.OrderService;
@@ -35,39 +36,44 @@ public class OrderController {
 	}
 	
 	@PostMapping("/place-order")
-	OrderDto placeOrder(@Valid @RequestBody NewOrderDto orderDto) {
-		return orderService.placeOrder(orderDto);
+	ResponseEntity<OrderDto> placeOrder(@Valid @RequestBody NewOrderDto orderDto) {
+		OrderDto result = orderService.placeOrder(orderDto);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/get-order-details/{orderId}")
-	OrderDetailsDto getOrderDetails(@PathVariable long orderId) {
-		return orderService.getOrderDetails(orderId);
+	ResponseEntity<OrderDetailsDto> getOrderDetails(@PathVariable long orderId) {
+		OrderDetailsDto result = orderService.getOrderDetails(orderId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	@GetMapping("/get-orders-for-customer/{customerId}")
-	List<OrderDto> getOrdersForCustomer(@PathVariable long customerId, @AuthenticationPrincipal SecurityUser securityUser){
+	ResponseEntity<List<OrderDto>> getOrdersForCustomer(@PathVariable long customerId, @AuthenticationPrincipal SecurityUser securityUser){
 		if(securityUser.getUser().getCustomer().getId()==customerId) {
-			return orderService.getOrdersForCustomer(customerId);
+			List<OrderDto> result = orderService.getOrdersForCustomer(customerId);
+	        return new ResponseEntity<>(result, HttpStatus.OK);
 
 		} else {
 			throw new NotAllowedException("You can get only your own list of orders");
 		}
-		
-		
 	}
 	
 	@GetMapping("/get-orders-for-restaurant/{restaurantId}")
-	List<OrderDto> getAllOrdersForRestaurant(@PathVariable int restaurantId){
-		return orderService.getOrdersForRestaurant(restaurantId);
+	ResponseEntity<List<OrderDto>> getAllOrdersForRestaurant(@PathVariable int restaurantId){
+		List<OrderDto> result = orderService.getOrdersForRestaurant(restaurantId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	@GetMapping("/get-bill/{orderId}")
-	BillDto getBill(@PathVariable long orderId) {
-		return orderService.getBill(orderId);
+	ResponseEntity<BillDto> getBill(@PathVariable long orderId) {
+		BillDto result = orderService.getBill(orderId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	@PostMapping("/update-order-delivery-status/{orderId}/{newStatus}")
-	void updateOrderDeliveryStatus(@PathVariable long orderId ,@PathVariable String newStatus) {
+	ResponseEntity<Boolean> updateOrderDeliveryStatus(@PathVariable long orderId ,@PathVariable String newStatus) {
 		orderService.updateOrderDeliveryStatus(orderId, newStatus);
+        return new ResponseEntity<>(true, HttpStatus.OK);
+
 	}
 }

@@ -24,8 +24,8 @@ public class NewDishDto {
 	
 	private boolean available;
 	
-	private String cuisine; // valid cuisine validator is needed
+	private String cuisine;
 	
 	@NotNull(message = "restaurantId cannot be null")
-	private int restaurantId; // restaurantExistOrNotvalidator needed
+	private int restaurantId;
 }

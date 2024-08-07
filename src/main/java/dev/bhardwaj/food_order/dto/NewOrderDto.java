@@ -21,6 +21,7 @@ public class NewOrderDto {
 	@NotNull
 	@DecimalMin(value = "0.0", inclusive = false, message = "total price must be greater than zero")
 	private float totalPrice;
+	
 	@NotBlank(message = "delivery address canno be blank")
 	private String deliveryAddress;
 	

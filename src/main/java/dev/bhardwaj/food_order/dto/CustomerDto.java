@@ -16,5 +16,5 @@ public class CustomerDto {
 	private String name;
 	private String email;
 	@Embedded
-	private Address address; // expand if needed
+	private Address address;
 }

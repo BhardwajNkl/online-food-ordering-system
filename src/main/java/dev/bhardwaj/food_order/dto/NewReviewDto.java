@@ -19,7 +19,7 @@ public class NewReviewDto {
 	@NotNull(message = "dish id cannot be null")
 	private int dishId;
 	
-	@NotBlank(message = "review comment cannot be null")
+	@NotBlank(message = "review comment cannot be blank")
 	private String review;
 	
 	private Timestamp timestamp;

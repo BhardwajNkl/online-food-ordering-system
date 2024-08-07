@@ -13,9 +13,9 @@ import lombok.Setter;
 @Setter
 public class ReviewDetailsDto {
 	private long id;
-	private long customerId;
-	private int dishId;
-	private String review; // 1 to 5
+//	private long customerId;
+//	private int dishId;
+	private String review;
 	private Timestamp timeStamp;
 	
 	private CustomerDto customerDto;

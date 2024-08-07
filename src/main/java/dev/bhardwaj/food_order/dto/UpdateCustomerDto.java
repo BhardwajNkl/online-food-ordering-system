@@ -22,7 +22,7 @@ public class UpdateCustomerDto {
 	@Email(message = "email is not valid")
 	private String email;
 	
-	@NotBlank(message = "locality cannot be null")
+	@NotBlank(message = "locality cannot be blank")
 	private String locality;
 	
 	@NotBlank(message = "city cannot be blank")

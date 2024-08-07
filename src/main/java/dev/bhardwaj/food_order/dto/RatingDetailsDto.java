@@ -12,9 +12,9 @@ import lombok.Setter;
 @Setter
 public class RatingDetailsDto {
 	private long id;
-	private long customerId;
-	private int dishId;
-	private byte rating; // 1 to 5
+//	private long customerId;
+//	private int dishId;
+	private byte rating;
 	private Timestamp timeStamp;
 	
 	private CustomerDto customerDto;

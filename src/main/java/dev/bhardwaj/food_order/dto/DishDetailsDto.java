@@ -2,7 +2,7 @@ package dev.bhardwaj.food_order.dto;
 
 import java.util.List;
 
-import dev.bhardwaj.food_order.entity.Dish.Cuisine;
+import dev.bhardwaj.food_order.entity.Cuisine;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,10 +22,6 @@ public class DishDetailsDto {
 	private Cuisine cuisine;
 	
 	private RestaurantDto restaurant;
-	
-//	private List<OrderDetailsDto> orders;
-	
-//	private List<RatingDetailsDto> ratings;
-	
-	private List<ReviewDetailsDto> reveiws;
+		
+	private List<ReviewDto> reveiws;
 }

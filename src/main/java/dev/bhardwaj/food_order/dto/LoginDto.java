@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LoginDto {
-	@NotBlank(message = "username/email cannot be blank")
+	@NotBlank(message = "email cannot be blank")
 	private String email;
 	
 	@NotBlank(message = "password cannot be blank")

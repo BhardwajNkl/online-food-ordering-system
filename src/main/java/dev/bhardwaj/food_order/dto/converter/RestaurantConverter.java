@@ -12,6 +12,8 @@ import dev.bhardwaj.food_order.dto.RestaurantDetailsDto;
 import dev.bhardwaj.food_order.dto.RestaurantDto;
 import dev.bhardwaj.food_order.dto.UpdateRestaurantDto;
 import dev.bhardwaj.food_order.entity.Restaurant;
+import dev.bhardwaj.food_order.exception.DoesNotExistException;
+import dev.bhardwaj.food_order.exception.DtoEntityConversionException;
 import dev.bhardwaj.food_order.repository.RestaurantRepository;
 
 @Component
@@ -43,13 +45,13 @@ public class RestaurantConverter {
 			UpdateRestaurantDto updateDto = (UpdateRestaurantDto) dto;
 			Restaurant restaurantToUpdate = restaurantRepository
 					.findById(updateDto.getId())
-					.orElseThrow(()->new RuntimeException("Restaurant does not exist!"));
+					.orElseThrow(()->new DoesNotExistException("Restaurant with given id does not exist!"));
 			restaurantToUpdate.setName(updateDto.getName());
 			restaurantToUpdate.setOpen(updateDto.isOpen());
 			return restaurantToUpdate;
 			
 		default:
-			throw new IllegalArgumentException("Unsupported DTO: " + dto.getClass().getSimpleName());
+			throw new DtoEntityConversionException("DTO to Restaurant Entity conversion failed");
 		}
 	}
 
@@ -58,13 +60,6 @@ public class RestaurantConverter {
 			return null;
 		}
 
-//		T dto;
-//
-//		try {
-//			dto = dtoClass.getDeclaredConstructor().newInstance();
-//		} catch (Exception e) {
-//			throw new RuntimeException("Failed to create DTO instance", e);
-//		}
 
 		switch (dtoClass.getSimpleName()) {
 		
@@ -95,7 +90,7 @@ public class RestaurantConverter {
 			return dtoClass.cast(restaurantDetailsDto);
 			
 		default:
-			throw new IllegalArgumentException("Unsupported DTO: " + dtoClass.getSimpleName());
+			throw new DtoEntityConversionException("Restaurant Entity to DTO conversion failed");
 		}
 
 	}

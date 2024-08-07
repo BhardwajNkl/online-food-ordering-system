@@ -42,10 +42,4 @@ public class Dish {
 	@OneToMany(fetch = FetchType.LAZY)
 	private List<Review> reveiws;
 	
-	public enum Cuisine{
-		CHINESE,
-		CONTINENTAL,
-		NORTH_INDIAN,
-		SOUTH_INDIAN
-	}
 }

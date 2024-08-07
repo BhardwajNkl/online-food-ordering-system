@@ -26,5 +26,6 @@ public class UpdateDishDto {
 	private float price;
 	
 	private boolean available;
+	
 	private String cuisine;
 }

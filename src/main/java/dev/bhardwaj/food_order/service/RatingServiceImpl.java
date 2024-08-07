@@ -13,6 +13,8 @@ import dev.bhardwaj.food_order.dto.converter.RatingConverter;
 import dev.bhardwaj.food_order.entity.Customer;
 import dev.bhardwaj.food_order.entity.Dish;
 import dev.bhardwaj.food_order.entity.Rating;
+import dev.bhardwaj.food_order.exception.DoesNotExistException;
+import dev.bhardwaj.food_order.exception.NotAllowedException;
 import dev.bhardwaj.food_order.repository.CustomerRepository;
 import dev.bhardwaj.food_order.repository.DishRepository;
 import dev.bhardwaj.food_order.repository.RatingRepository;
@@ -40,39 +42,35 @@ public class RatingServiceImpl implements RatingService {
 		
 		// note: rating can be added to ordered dishes only
 		Customer customer = customerRepository.findById(ratingDto.getCustomerId())
-				.orElseThrow(()->new RuntimeException("Customer does not exist"));
+				.orElseThrow(()->new DoesNotExistException("Customer with given id does not exist"));
 		
 		boolean customerHasOrderedThisDish = customer.getOrders()
 		.stream()
 		.anyMatch(order->order.getDish().getId()==ratingDto.getDishId());
 		
 		if(!customerHasOrderedThisDish) {
-			throw new RuntimeException("Cannot give rating! Customer has not ordered this dish!");
+			throw new NotAllowedException("Cannot give rating! Customer has not ordered this dish!");
 		}
 		
 		
-		
-		// now work on actual rating add logic
-		
 		Rating rating = ratingConverter.toEntity(ratingDto);
+		
 		Rating savedRating = ratingRepository.save(rating);
 		
-		// add this rating to customer's ratings given list
-//		Customer customer = customerRepository.findById(ratingDto.getCustomerId())
-//				.orElseThrow(()->new RuntimeException("Customer does not exist"));
 		customer.getRatingsGiven().add(rating);
+		
 		customerRepository.save(customer);
 		
-		// add the rating to dish' ratings list, before adding recalculate average rating
+		// add the rating to dish ratings list
 		Dish dish = dishRepository.findById(ratingDto.getDishId())
 				.orElseThrow(()->new RuntimeException("Dish does not exist"));
-		// also update dish average rating
+		
 		long currentRatingCount = dish.getRatings().size();
 		float currentAverageRating = dish.getAverageRating();
 		float newAverageRating = ((currentAverageRating*currentRatingCount) + rating.getRating())/(currentRatingCount+1);
 		dish.setAverageRating(newAverageRating);
-		dish.getRatings().add(rating);
 		
+		dish.getRatings().add(rating);
 		
 		dishRepository.save(dish);
 				
@@ -82,7 +80,7 @@ public class RatingServiceImpl implements RatingService {
 	@Override
 	public List<RatingDetailsDto> getRatingsGivenByCustomer(long customerId) {
 		Customer customer = customerRepository.findById(customerId)
-				.orElseThrow(()->new RuntimeException("Customer does not exist"));
+				.orElseThrow(()->new DoesNotExistException("Customer with given id does not exist"));
 		return customer.getRatingsGiven().stream()
 				.map(rating->ratingConverter.toDto(rating, RatingDetailsDto.class))
 				.collect(Collectors.toList());
@@ -91,7 +89,7 @@ public class RatingServiceImpl implements RatingService {
 	@Override
 	public List<RatingDetailsDto> getRatingsForDish(int dishId) {
 		Dish dish = dishRepository.findById(dishId)
-				.orElseThrow(()->new RuntimeException("Dish does not exist"));
+				.orElseThrow(()->new DoesNotExistException("Dish with given id does not exist"));
 		return dish.getRatings()
 				.stream()
 				.map(rating->ratingConverter.toDto(rating, RatingDetailsDto.class))

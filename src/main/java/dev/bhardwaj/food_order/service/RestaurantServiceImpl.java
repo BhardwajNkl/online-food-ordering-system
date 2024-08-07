@@ -8,30 +8,25 @@ import dev.bhardwaj.food_order.dto.RestaurantDetailsDto;
 import dev.bhardwaj.food_order.dto.RestaurantDto;
 import dev.bhardwaj.food_order.dto.converter.RestaurantConverter;
 import dev.bhardwaj.food_order.entity.Restaurant;
+import dev.bhardwaj.food_order.exception.DoesNotExistException;
 import dev.bhardwaj.food_order.repository.RestaurantRepository;
 
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
 	
+	private final RestaurantRepository restaurantRepository;
+
 	@Autowired
 	private RestaurantConverter restaurantConverter;
-	
-	private final RestaurantRepository restaurantRepository;
-//	private final DtoToEntityMapper dtoToEntityMapper;
-	
-	public RestaurantServiceImpl(RestaurantRepository restaurantRepository) {
-		this.restaurantRepository = restaurantRepository;
-//		this.dtoToEntityMapper = dtoToEntityMapper;
 		
+	public RestaurantServiceImpl(RestaurantRepository restaurantRepository) {
+		this.restaurantRepository = restaurantRepository;		
 	}
 
 	@Override
 	public RestaurantDto createRestaurant(NewRestaurantDto restaurantDto) {	
-//		Restaurant restaurant = dtoToEntityMapper.newRestaurantDtoToEntity(restaurantDto);
 		Restaurant restaurant = restaurantConverter.toEntity(restaurantDto);
 		Restaurant createdRestaurant = restaurantRepository.save(restaurant);
-		
-		// return dto
 		return restaurantConverter.toDto(createdRestaurant, RestaurantDto.class);
 	}
 
@@ -43,7 +38,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 	@Override
 	public void openRestaurant(int restaurantId) {
 		Restaurant restaurant = restaurantRepository.findById(restaurantId)
-				.orElseThrow(()-> new RuntimeException("Restaurnat does not exist!"));
+				.orElseThrow(()-> new DoesNotExistException("Restaurnat with given id does not exist!"));
 		restaurant.setOpen(true);
 		restaurantRepository.save(restaurant);
 	}
@@ -51,7 +46,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 	@Override
 	public void closeRestaurant(int restaurantId) {
 		Restaurant restaurant = restaurantRepository.findById(restaurantId)
-				.orElseThrow(()-> new RuntimeException("Restaurnat does not exist!"));
+				.orElseThrow(()-> new DoesNotExistException("Restaurnat with given id does not exist!"));
 		restaurant.setOpen(false);
 		restaurantRepository.save(restaurant);
 	}
@@ -59,15 +54,8 @@ public class RestaurantServiceImpl implements RestaurantService {
 	@Override
 	public RestaurantDetailsDto getRestaurantDetails(int restaurantId) {
 		Restaurant restaurant = restaurantRepository.findById(restaurantId)
-				.orElseThrow(()-> new RuntimeException("Restaurnat does not exist!"));
+				.orElseThrow(()-> new DoesNotExistException("Restaurnat with given id does not exist!"));
 		return restaurantConverter.toDto(restaurant, RestaurantDetailsDto.class);
-	}
-	
-	@Override
-	public Restaurant getRestaurant(int restaurantId) {
-		return restaurantRepository.findById(restaurantId)
-				.orElseThrow(()-> new RuntimeException("Restaurnat does not exist!"));
-		
 	}
 	
 }

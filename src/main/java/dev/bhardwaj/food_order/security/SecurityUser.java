@@ -23,7 +23,6 @@ public class SecurityUser implements UserDetails {
 
 	@Override
 	public Collection<GrantedAuthority> getAuthorities() {
-		
 		return user.getRoles()
 				.stream()
 				.map(role->new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());

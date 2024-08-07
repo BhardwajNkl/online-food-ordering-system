@@ -11,6 +11,8 @@ import dev.bhardwaj.food_order.dto.RatingDto;
 import dev.bhardwaj.food_order.entity.Customer;
 import dev.bhardwaj.food_order.entity.Dish;
 import dev.bhardwaj.food_order.entity.Rating;
+import dev.bhardwaj.food_order.exception.DoesNotExistException;
+import dev.bhardwaj.food_order.exception.DtoEntityConversionException;
 import dev.bhardwaj.food_order.repository.CustomerRepository;
 import dev.bhardwaj.food_order.repository.DishRepository;
 
@@ -19,10 +21,13 @@ public class RatingConverter {
 	
 	@Autowired
 	private CustomerRepository customerRepository;
+	
 	@Autowired
 	private CustomerConverter customerConverter;
+	
 	@Autowired
 	private DishRepository dishRepository;
+	
 	@Autowired
 	private DishConverter dishConverter;
 	
@@ -44,21 +49,13 @@ public class RatingConverter {
 			return rating;
 			
 		default:
-			throw new IllegalArgumentException("Unsupported DTO: " + dto.getClass().getSimpleName());
+			throw new DtoEntityConversionException("DTO to Rating Entity conversion failed");
 		}
 	}
 
 	public <T> T toDto(Rating rating, Class<T> dtoClass) {
 		if (rating == null) {
 			return null;
-		}
-
-		T dto;
-
-		try {
-			dto = dtoClass.getDeclaredConstructor().newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to create DTO instance", e);
 		}
 
 		switch (dtoClass.getSimpleName()) {
@@ -76,18 +73,15 @@ public class RatingConverter {
 		case "RatingDetailsDto":
 			RatingDetailsDto ratingDetailsDto = new RatingDetailsDto();
 			ratingDetailsDto.setId(rating.getId());
-			ratingDetailsDto.setCustomerId(rating.getCustomerId());
-			ratingDetailsDto.setDishId(rating.getDishId());
 			ratingDetailsDto.setRating(rating.getRating());
 			ratingDetailsDto.setTimeStamp(rating.getTimeStamp());
 			
-			// set customer and dish dtos also
 			Customer customer = customerRepository
 					.findById(rating.getCustomerId())
-					.orElseThrow(()->new RuntimeException("Customer does not exist!"));
+					.orElseThrow(()->new DoesNotExistException("Customer with given id does not exist!"));
 			Dish dish = dishRepository
 					.findById(rating.getDishId())
-					.orElseThrow(()->new RuntimeException("Dish does not exist!"));
+					.orElseThrow(()->new DoesNotExistException("Dish with given id does not exist!"));
 			
 			CustomerDto customerDto = customerConverter.toDto(customer, CustomerDto.class);
 			DishDto dishDto = dishConverter.toDto(dish, DishDto.class);
@@ -98,7 +92,7 @@ public class RatingConverter {
 			return dtoClass.cast(ratingDetailsDto);
 			
 		default:
-			throw new IllegalArgumentException("Unsupported DTO: " + dtoClass.getSimpleName());
+			throw new DtoEntityConversionException("Rating Entity to DTO conversion failed");
 		}
 	}
 }

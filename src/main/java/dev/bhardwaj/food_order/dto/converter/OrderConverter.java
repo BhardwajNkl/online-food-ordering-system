@@ -12,6 +12,8 @@ import dev.bhardwaj.food_order.entity.Customer;
 import dev.bhardwaj.food_order.entity.Dish;
 import dev.bhardwaj.food_order.entity.Order;
 import dev.bhardwaj.food_order.entity.Order.DeliveryStatus;
+import dev.bhardwaj.food_order.exception.DoesNotExistException;
+import dev.bhardwaj.food_order.exception.DtoEntityConversionException;
 import dev.bhardwaj.food_order.repository.CustomerRepository;
 import dev.bhardwaj.food_order.repository.DishRepository;
 
@@ -20,10 +22,13 @@ public class OrderConverter {
 	
 	@Autowired
 	private DishRepository dishRepository;
+	
 	@Autowired
 	private CustomerRepository customerRepository;
+	
 	@Autowired
 	private DishConverter dishConverter;
+	
 	@Autowired
 	private CustomerConverter customerConverter;
 	
@@ -41,11 +46,10 @@ public class OrderConverter {
 			order.setDeliveryStatus(DeliveryStatus.valueOf("ORDER_RECEIVED"));
 			order.setTotalPrice(newDto.getTotalPrice());
 			
-			// set customer and dish also
 			Customer customer = customerRepository.findById(newDto.getCustomerId())
 					.orElseThrow(()->new RuntimeException("Customer does not exist!"));
 			Dish dish = dishRepository.findById(newDto.getDishId())
-					.orElseThrow(()->new RuntimeException("Dish does not exist!"));
+					.orElseThrow(()->new DoesNotExistException("Dish with given id does not exist!"));
 			
 			order.setCustomer(customer);
 			order.setDish(dish);
@@ -53,21 +57,13 @@ public class OrderConverter {
 			return order;
 			
 		default:
-			throw new IllegalArgumentException("Unsupported DTO: " + dto.getClass().getSimpleName());
+			throw new DtoEntityConversionException("DTO to Order Entity conversion failed");
 		}
 	}
 
 	public <T> T toDto(Order order, Class<T> dtoClass) {
 		if (order == null) {
 			return null;
-		}
-
-		T dto;
-
-		try {
-			dto = dtoClass.getDeclaredConstructor().newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to create DTO instance", e);
 		}
 
 		switch (dtoClass.getSimpleName()) {
@@ -90,7 +86,6 @@ public class OrderConverter {
 			orderDetailsDto.setDeliveryStatus(order.getDeliveryStatus());
 			orderDetailsDto.setTotalPrice(order.getTotalPrice());
 			
-			// set customer and dish dtos also
 			Customer customer = order.getCustomer();
 			Dish dish = order.getDish();
 			
@@ -103,7 +98,7 @@ public class OrderConverter {
 			return dtoClass.cast(orderDetailsDto);
 			
 		default:
-			throw new IllegalArgumentException("Unsupported DTO: " + dtoClass.getSimpleName());
+			throw new DtoEntityConversionException("Order Entity to DTO conversion failed");
 		}
 	}
 }

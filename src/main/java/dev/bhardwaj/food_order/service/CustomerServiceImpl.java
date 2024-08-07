@@ -24,7 +24,6 @@ import dev.bhardwaj.food_order.repository.CustomerRepository;
 import dev.bhardwaj.food_order.repository.RoleRepository;
 import dev.bhardwaj.food_order.repository.UserRepository;
 import dev.bhardwaj.food_order.security.JwtUtil;
-import dev.bhardwaj.food_order.security.SecurityUser;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -56,16 +55,16 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public CustomerDto createCustomer(NewCustomerDto customerDto) {
+		
 		Customer customer = customerConverter.toEntity(customerDto);
 		
-		// create the user account of this customer: get the data in dto. for now using default
+		// create a new user first
 		User user = new User();
 		user.setEmail(customerDto.getEmail());
 		user.setPassword(passwordEncoder.encode(customerDto.getPassword()));
 		RoleEntity role = roleRepository.findByName("NORMAL_USER").orElse(null);
 		user.setRoles(Arrays.asList(role));
 		userRepository.save(user);
-		
 		
 		customer.setUser(user);
 		
@@ -82,7 +81,6 @@ public class CustomerServiceImpl implements CustomerService {
 		Customer savedUpdatedCustomer = customerRepository.save(updatedCustomer);
 		
 		return customerConverter.toDto(savedUpdatedCustomer, CustomerDto.class);
-        
        	
 	}
 
@@ -94,17 +92,11 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public CustomerDetailsDto getCustomerDetails(long customerId) {
 		Customer customer = customerRepository.findById(customerId)
-				.orElseThrow(()->new DoesNotExistException("Customer doe not exist!"));
+				.orElseThrow(()->new DoesNotExistException("Customer with given id does not exist!"));
 		
 		return customerConverter.toDto(customer, CustomerDetailsDto.class);
 		
 	}
-
-//	@Override
-//	public Customer getCustomer(long customerId) {
-//		return customerRepository.findById(customerId)
-//				.orElseThrow(()->new RuntimeException("Customer doe not exist!"));
-//	}
 	
 	@Override
 	public String login(LoginDto loginDto) {
@@ -117,7 +109,6 @@ public class CustomerServiceImpl implements CustomerService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtUtil.generateToken(authentication);
         return token;
-
     }
 
 }

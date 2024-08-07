@@ -22,6 +22,6 @@ public class Rating {
 	private long id;
 	private long customerId;
 	private int dishId;
-	private byte rating; // 1 to 5
+	private byte rating;
 	private Timestamp timeStamp;	
 }

@@ -7,33 +7,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import dev.bhardwaj.food_order.dto.CustomerDto;
 import dev.bhardwaj.food_order.dto.DishDetailsDto;
 import dev.bhardwaj.food_order.dto.DishDto;
 import dev.bhardwaj.food_order.dto.NewDishDto;
-import dev.bhardwaj.food_order.dto.OrderDetailsDto;
-import dev.bhardwaj.food_order.dto.RatingDetailsDto;
 import dev.bhardwaj.food_order.dto.RestaurantDto;
-import dev.bhardwaj.food_order.dto.ReviewDetailsDto;
+import dev.bhardwaj.food_order.dto.ReviewDto;
 import dev.bhardwaj.food_order.dto.UpdateDishDto;
-import dev.bhardwaj.food_order.entity.Customer;
+//import dev.bhardwaj.food_order.entity.Dish.Cuisine;
+import dev.bhardwaj.food_order.entity.Cuisine;
 import dev.bhardwaj.food_order.entity.Dish;
-import dev.bhardwaj.food_order.entity.Dish.Cuisine;
 import dev.bhardwaj.food_order.entity.Restaurant;
-import dev.bhardwaj.food_order.repository.CustomerRepository;
+import dev.bhardwaj.food_order.exception.DoesNotExistException;
+import dev.bhardwaj.food_order.exception.DtoEntityConversionException;
 import dev.bhardwaj.food_order.repository.DishRepository;
 import dev.bhardwaj.food_order.repository.RestaurantRepository;
-import dev.bhardwaj.food_order.service.DishService;
-import dev.bhardwaj.food_order.service.RestaurantService;
 
 @Component
 public class DishConverter {
 	@Autowired
 	private RestaurantRepository restaurantRepository;
+	
 	@Autowired
 	private DishRepository dishRepository;
-	@Autowired
-	private CustomerRepository customerRepository;
 	
 	@Autowired
 	@Lazy
@@ -43,8 +38,6 @@ public class DishConverter {
 	@Lazy
 	private CustomerConverter customerConverter;
 	
-//	@Autowired
-//	private DishConverter dishConverter;
 	
 	public Dish toEntity(Object dto) {
 		if (dto == null) {
@@ -56,10 +49,10 @@ public class DishConverter {
 			Dish dish = new Dish();
 			NewDishDto newDto = (NewDishDto) dto;
 			Restaurant restaurant = restaurantRepository.findById(newDto.getRestaurantId())
-					.orElseThrow(()->new RuntimeException("Restaurant does not exist!"));
+					.orElseThrow(()->new DoesNotExistException("Restaurant with given id does not exist!"));
 			dish.setName(newDto.getName());
 			dish.setAvailable(newDto.isAvailable());
-			dish.setAverageRating(0); // 0 indicates not yet rated
+			dish.setAverageRating(0);
 			dish.setCuisine(Cuisine.valueOf(newDto.getCuisine()));
 			dish.setDescription(newDto.getDescription());
 			dish.setPrice(newDto.getPrice());
@@ -69,7 +62,7 @@ public class DishConverter {
 		case "UpdateDishDto":
 			UpdateDishDto updateDto = (UpdateDishDto) dto;
 			Dish dishToUpdate = dishRepository.findById(updateDto.getId())
-					.orElseThrow(()->new RuntimeException("Dish does not exist!"));
+					.orElseThrow(()->new DoesNotExistException("Dish with given id does not exist!"));
 			dishToUpdate.setName(updateDto.getName());
 			dishToUpdate.setDescription(updateDto.getDescription());
 			dishToUpdate.setPrice(updateDto.getPrice());
@@ -79,21 +72,13 @@ public class DishConverter {
 			return dishToUpdate;
 			
 		default:
-			throw new IllegalArgumentException("Unsupported DTO: " + dto.getClass().getSimpleName());
+			throw new DtoEntityConversionException("DTO to Dish Entity conversion failed");
 		}
 	}
 
 	public <T> T toDto(Dish dish, Class<T> dtoClass) {
 		if (dish == null) {
 			return null;
-		}
-
-		T dto;
-
-		try {
-			dto = dtoClass.getDeclaredConstructor().newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to create DTO instance", e);
 		}
 
 		switch (dtoClass.getSimpleName()) {
@@ -120,67 +105,19 @@ public class DishConverter {
 			dishDetailsDto.setName(dish.getName());
 			dishDetailsDto.setPrice(dish.getPrice());
 			
-//			List<OrderDetailsDto> orders = dish.getOrders()
-//					.stream()
-//					.map(
-//						order->{
-//							return new OrderDetailsDto();
-//						}
-//						)
-//					.collect(Collectors.toList());
-//			
-//			dishDetailsDto.setOrders(orders);
-			
-//			List<RatingDetailsDto> ratings = dish.getRatings()
-//					.stream()
-//					.map(
-//						rating->{
-//							RatingDetailsDto ratingDetailsDto = new RatingDetailsDto();
-//							ratingDetailsDto.setId(rating.getId());
-//							ratingDetailsDto.setCustomerId(rating.getCustomerId());
-//							ratingDetailsDto.setDishId(rating.getDishId());
-//							ratingDetailsDto.setRating(rating.getRating());
-//							ratingDetailsDto.setTimeStamp(rating.getTimeStamp());
-//							
-//							Customer customer = customerRepository
-//									.findById(rating.getCustomerId())
-//									.orElseThrow(()->new RuntimeException("Customer does not exist!"));
-//							Dish dishRated = dishRepository.findById(rating.getDishId())
-//									.orElseThrow(()->new RuntimeException("Dish does not exist!"));
-//							
-//							// convert to dto
-//							ratingDetailsDto.setCustomerDto(customerConverter.toDto(customer, CustomerDto.class));
-//							ratingDetailsDto.setDishDto(toDto(dishRated, DishDto.class));
-//							
-//							return ratingDetailsDto;
-//						}
-//						)
-//					.collect(Collectors.toList());
-//			
-//			dishDetailsDto.setRatings(ratings);
-			
-			List<ReviewDetailsDto> reviews = dish.getReveiws()
+			List<ReviewDto> reviews = dish.getReveiws()
 					.stream()
 					.map(
 						review->{
-							ReviewDetailsDto reviewDetailsDto = new ReviewDetailsDto();
-							reviewDetailsDto.setId(review.getId());
-							reviewDetailsDto.setCustomerId(review.getCustomerId());
-							reviewDetailsDto.setDishId(review.getDishId());
-							reviewDetailsDto.setReview(review.getReview());
-							reviewDetailsDto.setTimeStamp(review.getTimestamp());
 							
-							Customer customer = customerRepository
-									.findById(review.getCustomerId())
-									.orElseThrow(()->new RuntimeException("Customer does not exist!"));
-							Dish dishReviewd = dishRepository.findById(review.getDishId())
-									.orElseThrow(()->new RuntimeException("Dish does not exist!"));
+							ReviewDto reviewDto = new ReviewDto();
+							reviewDto.setId(review.getId());
+							reviewDto.setCustomerId(review.getCustomerId());
+							reviewDto.setDishId(review.getDishId());
+							reviewDto.setReview(review.getReview());
+							reviewDto.setTimestamp(review.getTimestamp());
+							return reviewDto;
 							
-							// convert to dto
-							reviewDetailsDto.setCustomerDto(customerConverter.toDto(customer, CustomerDto.class));
-							reviewDetailsDto.setDishDto(toDto(dishReviewd, DishDto.class));
-							
-							return reviewDetailsDto;
 						}
 						)
 					.collect(Collectors.toList());
@@ -193,7 +130,7 @@ public class DishConverter {
 			return dtoClass.cast(dishDetailsDto);
 			
 		default:
-			throw new IllegalArgumentException("Unsupported DTO: " + dtoClass.getSimpleName());
+			throw new DtoEntityConversionException("Dish Entity to DTO conversion failed");
 		}
 	}
 }

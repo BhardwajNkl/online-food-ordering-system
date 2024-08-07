@@ -7,9 +7,7 @@ import dev.bhardwaj.food_order.dto.ReviewDetailsDto;
 import dev.bhardwaj.food_order.dto.ReviewDto;
 
 public interface ReviewService {
-	ReviewDto createReview(NewReviewDto reviewDto);
-//	void deleteReview(long reviewId);
-	
+	ReviewDto createReview(NewReviewDto reviewDto);	
 	List<ReviewDetailsDto> getReviewsGivenByCustomer(long customerId);
 	List<ReviewDetailsDto> getReviewsForDish(int dishId);
 }

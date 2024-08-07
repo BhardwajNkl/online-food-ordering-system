@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<ErrorResponse> handleNotAllowedException(NotAllowedException ex) {
         ErrorResponse errorResponse = new ErrorResponse("NOT_ALLOWED", ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
     
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -44,6 +44,13 @@ public class GlobalExceptionHandler {
         List<ConstraintViolation<?>> violations = new ArrayList<>(ex.getConstraintViolations()); 
         ErrorResponse errorResponse = new ErrorResponse("VALIDATION_FAILURE", violations.get(0).getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(DtoEntityConversionException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ErrorResponse> handleDtoEntityConversionException(DtoEntityConversionException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("SERVER_ERROR", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
 

@@ -9,29 +9,19 @@ import org.springframework.stereotype.Component;
 
 import dev.bhardwaj.food_order.dto.CustomerDetailsDto;
 import dev.bhardwaj.food_order.dto.CustomerDto;
-import dev.bhardwaj.food_order.dto.DishDto;
 import dev.bhardwaj.food_order.dto.NewCustomerDto;
-import dev.bhardwaj.food_order.dto.OrderDetailsDto;
 import dev.bhardwaj.food_order.dto.OrderDto;
-import dev.bhardwaj.food_order.dto.RatingDetailsDto;
-import dev.bhardwaj.food_order.dto.ReviewDetailsDto;
 import dev.bhardwaj.food_order.dto.UpdateCustomerDto;
 import dev.bhardwaj.food_order.entity.Customer;
-import dev.bhardwaj.food_order.entity.Dish;
+import dev.bhardwaj.food_order.exception.DoesNotExistException;
+import dev.bhardwaj.food_order.exception.DtoEntityConversionException;
 import dev.bhardwaj.food_order.repository.CustomerRepository;
-import dev.bhardwaj.food_order.repository.DishRepository;
 
 @Component
 public class CustomerConverter {
 	
 	@Autowired
 	private CustomerRepository customerRepository;
-	
-	@Autowired
-	private DishRepository dishRepository;
-	
-	@Autowired
-	private DishConverter dishConverter;
 	
 	@Autowired
 	@Lazy
@@ -58,7 +48,7 @@ public class CustomerConverter {
 			UpdateCustomerDto updateDto = (UpdateCustomerDto) dto;
 			Customer customerToUpdate = customerRepository
 					.findById(updateDto.getId())
-					.orElseThrow(()->new RuntimeException("Customer does not exist!"));
+					.orElseThrow(()->new DoesNotExistException("Customer with given id does not exist!"));
 			customerToUpdate.setName(updateDto.getName());
 			customerToUpdate.setEmail(updateDto.getEmail());
 			Customer.Address addressToUpdate = new Customer.Address(updateDto.getLocality(),
@@ -67,21 +57,13 @@ public class CustomerConverter {
 			return customerToUpdate;
 			
 		default:
-			throw new IllegalArgumentException("Unsupported DTO: " + dto.getClass().getSimpleName());
+			throw new DtoEntityConversionException("DTO to Customer Entity conversion failed");
 		}
 	}
 
 	public <T> T toDto(Customer customer, Class<T> dtoClass) {
 		if (customer == null) {
 			return null;
-		}
-
-		T dto;
-
-		try {
-			dto = dtoClass.getDeclaredConstructor().newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to create DTO instance", e);
 		}
 
 		switch (dtoClass.getSimpleName()) {
@@ -114,66 +96,11 @@ public class CustomerConverter {
 			
 			customerDetailsDto.setOrders(orders);
 			
-//			List<RatingDetailsDto> ratings = customer.getRatingsGiven()
-//					.stream()
-//					.map(
-//						rating->{
-//							RatingDetailsDto ratingDetailsDto = new RatingDetailsDto();
-//							ratingDetailsDto.setId(rating.getId());
-//							ratingDetailsDto.setCustomerId(rating.getCustomerId());
-//							ratingDetailsDto.setDishId(rating.getDishId());
-//							ratingDetailsDto.setRating(rating.getRating());
-//							ratingDetailsDto.setTimeStamp(rating.getTimeStamp());
-//							
-////							Customer customer = customerRepository
-////									.findById(rating.getCustomerId())
-////									.orElseThrow(()->new RuntimeException("Customer does not exist!"));
-//							Dish dishRated = dishRepository.findById(rating.getDishId())
-//									.orElseThrow(()->new RuntimeException("Dish does not exist!"));
-//							
-//							// convert to dto
-//							ratingDetailsDto.setCustomerDto(toDto(customer, CustomerDto.class));
-//							ratingDetailsDto.setDishDto(dishConverter.toDto(dishRated, DishDto.class));
-//							
-//							return ratingDetailsDto;
-//						}
-//						)
-//					.collect(Collectors.toList());
-//			
-//			customerDetailsDto.setRatingsGiven(ratings);
-			
-//			List<ReviewDetailsDto> reviews = customer.getReviewsGiven()
-//					.stream()
-//					.map(
-//						review->{
-//							ReviewDetailsDto reviewDetailsDto = new ReviewDetailsDto();
-//							reviewDetailsDto.setId(review.getId());
-//							reviewDetailsDto.setCustomerId(review.getCustomerId());
-//							reviewDetailsDto.setDishId(review.getDishId());
-//							reviewDetailsDto.setReview(review.getReview());
-//							reviewDetailsDto.setTimeStamp(review.getTimestamp());
-//							
-////							Customer customer = customerRepository
-////									.findById(review.getCustomerId())
-////									.orElseThrow(()->new RuntimeException("Customer does not exist!"));
-//							Dish dishReviewd = dishRepository.findById(review.getDishId())
-//									.orElseThrow(()->new RuntimeException("Dish does not exist!"));
-//							
-//							// convert to dto
-//							reviewDetailsDto.setCustomerDto(toDto(customer, CustomerDto.class));
-//							reviewDetailsDto.setDishDto(dishConverter.toDto(dishReviewd, DishDto.class));
-//							
-//							return reviewDetailsDto;
-//						}
-//						)
-//					.collect(Collectors.toList());
-//			
-//			customerDetailsDto.setReviewsGiven(reviews);
 			
 			return dtoClass.cast(customerDetailsDto);
 			
 		default:
-			throw new IllegalArgumentException("Unsupported DTO: " + dtoClass.getSimpleName());
+			throw new DtoEntityConversionException("Customer entity to DTO conversion failed");
 		}
 
 	}

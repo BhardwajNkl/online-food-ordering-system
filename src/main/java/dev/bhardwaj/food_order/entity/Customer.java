@@ -3,6 +3,7 @@ package dev.bhardwaj.food_order.entity;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -26,8 +27,12 @@ public class Customer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
+	
 	private String name;
+	
+	@Column(unique = true)
 	private String email;
+	
 	@Embedded
 	private Address address;
 	

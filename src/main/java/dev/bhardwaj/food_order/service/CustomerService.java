@@ -5,15 +5,11 @@ import dev.bhardwaj.food_order.dto.CustomerDto;
 import dev.bhardwaj.food_order.dto.LoginDto;
 import dev.bhardwaj.food_order.dto.NewCustomerDto;
 import dev.bhardwaj.food_order.dto.UpdateCustomerDto;
-import dev.bhardwaj.food_order.entity.Customer;
 
 public interface CustomerService {
 	CustomerDto createCustomer(NewCustomerDto customerDto);
-	CustomerDto updateCustomerDetails(UpdateCustomerDto customerDto);
-//	Customer getCustomer(long customerId);
-	
+	CustomerDto updateCustomerDetails(UpdateCustomerDto customerDto);	
 	void deleteCustomer(long id);
 	CustomerDetailsDto getCustomerDetails(long id);
-	
 	String login(LoginDto loginDto);
 }

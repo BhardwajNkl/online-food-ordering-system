@@ -19,10 +19,5 @@ public class CustomerDetailsDto {
 	private String email;
 	@Embedded
 	private Address address;
-	
-	private List<OrderDto> orders;
-	
-//	private List<RatingDetailsDto> ratingsGiven;
-	
-//	private List<ReviewDetailsDto> reviewsGiven;
+	private List<OrderDto> orders;	
 }

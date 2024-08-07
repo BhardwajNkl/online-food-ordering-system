@@ -3,7 +3,8 @@ package dev.bhardwaj.food_order.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +19,6 @@ import dev.bhardwaj.food_order.dto.DishDetailsDto;
 import dev.bhardwaj.food_order.dto.DishDto;
 import dev.bhardwaj.food_order.dto.NewDishDto;
 import dev.bhardwaj.food_order.dto.UpdateDishDto;
-import dev.bhardwaj.food_order.entity.Dish;
-import dev.bhardwaj.food_order.security.SecurityUser;
 import dev.bhardwaj.food_order.service.DishService;
 import jakarta.validation.Valid;
 
@@ -37,39 +36,47 @@ public class DishController {
 	
 	
 	@PostMapping("/add-dish")
-	DishDto addDish(@Valid @RequestBody NewDishDto dishDto) {
-		return dishService.createDish(dishDto);
+	ResponseEntity<DishDto> addDish(@Valid @RequestBody NewDishDto dishDto) {
+		DishDto result = dishService.createDish(dishDto);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
+
 	}
 	
 	@PutMapping("/update-dish")
-	DishDto updteDish(@Valid @RequestBody UpdateDishDto dishDto) {
-		return dishService.updateDish(dishDto);
+	ResponseEntity<DishDto> updteDish(@Valid @RequestBody UpdateDishDto dishDto) {
+		DishDto result = dishService.updateDish(dishDto);
+        return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/delete-dish/{dishId}")
-	void deleteDish(@PathVariable int dishId) {
+	ResponseEntity<?> deleteDish(@PathVariable int dishId) {
 		dishService.deleteDish(dishId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 	
 	@GetMapping("/get-dish-details/{dishId}")
-	DishDetailsDto getDishDetails(@PathVariable int dishId) {
-		return dishService.getDishDetails(dishId);
+	ResponseEntity<DishDetailsDto> getDishDetails(@PathVariable int dishId) {
+		DishDetailsDto result = dishService.getDishDetails(dishId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	
 	@GetMapping("/get-dishes-from-restaurant-by-cuisine/{restaurantId}/{cuisine}")
-	List<DishDto> getDishesFromRestaurantByCuisine(@PathVariable int restaurantId, @PathVariable String cuisine){
-		return dishService.getDishesFromRestaurantByCuisine(restaurantId, cuisine);
+	ResponseEntity<List<DishDto>> getDishesFromRestaurantByCuisine(@PathVariable int restaurantId, @PathVariable String cuisine){
+		List<DishDto> result = dishService.getDishesFromRestaurantByCuisine(restaurantId, cuisine);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
 	}
 	
-	
 	@GetMapping("/get-dishes-by-cuisine/{cuisine}")
-	List<DishDto> getDishesByCuisine(@PathVariable String cuisine){
-		return dishService.getDishesByCuisine(cuisine);
+	ResponseEntity<List<DishDto>> getDishesByCuisine(@PathVariable String cuisine){
+		List<DishDto> result = dishService.getDishesByCuisine(cuisine);
+        return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	@GetMapping("/get-dishes-based-on-rating")
-	List<DishDto> getDishesBasedOnRating(){
-		return dishService.getDishesBasedOnRating();
+	ResponseEntity<List<DishDto> > getDishesBasedOnRating(){
+		List<DishDto> result = dishService.getDishesBasedOnRating();
+        return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 }

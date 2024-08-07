@@ -1,6 +1,6 @@
 package dev.bhardwaj.food_order.dto;
 
-import dev.bhardwaj.food_order.entity.Dish.Cuisine;
+import dev.bhardwaj.food_order.entity.Cuisine;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

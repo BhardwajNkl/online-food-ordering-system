@@ -23,7 +23,9 @@ public class Restaurant {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	
 	private String name;
+	
 	private boolean open;
 	
 	@OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

@@ -8,12 +8,10 @@ import dev.bhardwaj.food_order.dto.OrderDetailsDto;
 import dev.bhardwaj.food_order.dto.OrderDto;
 
 public interface OrderService {
-	OrderDto placeOrder(NewOrderDto orderDto); // neworder dto
+	OrderDto placeOrder(NewOrderDto orderDto);
 	OrderDetailsDto getOrderDetails(long orderId);
-	BillDto getBill(long orderId); // bill with customer name
-
+	BillDto getBill(long orderId);
 	List<OrderDto> getOrdersForCustomer(long customerId);
 	List<OrderDto> getOrdersForRestaurant(int restaurantId);
-	
 	void updateOrderDeliveryStatus(long orderId, String newStatus);
 }
