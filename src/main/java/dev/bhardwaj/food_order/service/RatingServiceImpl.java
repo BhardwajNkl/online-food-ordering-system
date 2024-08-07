@@ -40,15 +40,13 @@ public class RatingServiceImpl implements RatingService {
 	@Override
 	public RatingDto createRating(NewRatingDto ratingDto) {
 		
-		// note: rating can be added to ordered dishes only
+		// rating can be added to ordered dishes only
 		Customer customer = customerRepository.findById(ratingDto.getCustomerId())
 				.orElseThrow(()->new DoesNotExistException("Customer with given id does not exist"));
 		
-		boolean customerHasOrderedThisDish = customer.getOrders()
-		.stream()
-		.anyMatch(order->order.getDish().getId()==ratingDto.getDishId());
+		long hasCustomerOrderedDish = customerRepository.hasCustomerOrderedDish(ratingDto.getCustomerId(), ratingDto.getDishId());
 		
-		if(!customerHasOrderedThisDish) {
+		if(hasCustomerOrderedDish==0) {
 			throw new NotAllowedException("Cannot give rating! Customer has not ordered this dish!");
 		}
 		

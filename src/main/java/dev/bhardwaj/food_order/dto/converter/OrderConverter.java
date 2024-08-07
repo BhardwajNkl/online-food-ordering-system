@@ -1,5 +1,8 @@
 package dev.bhardwaj.food_order.dto.converter;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,16 +46,22 @@ public class OrderConverter {
 			NewOrderDto newDto = (NewOrderDto) dto;
 			order.setDate(newDto.getDate());
 			order.setDeliveryAddress(newDto.getDeliveryAddress());
-			order.setDeliveryStatus(DeliveryStatus.valueOf("ORDER_RECEIVED"));
-			order.setTotalPrice(newDto.getTotalPrice());
-			
+			order.setDeliveryStatus(DeliveryStatus.valueOf("ORDER_RECEIVED"));			
 			Customer customer = customerRepository.findById(newDto.getCustomerId())
-					.orElseThrow(()->new RuntimeException("Customer does not exist!"));
-			Dish dish = dishRepository.findById(newDto.getDishId())
-					.orElseThrow(()->new DoesNotExistException("Dish with given id does not exist!"));
+					.orElseThrow(()->new DoesNotExistException("Customer does not exist!"));
+			
+			List<Dish> dishes = dishRepository.findAllById(newDto.getDishIds());
+			
+			// set total order price
+			float totalPrice = 0;
+			for(Dish dish: dishes) {
+				totalPrice+=dish.getPrice();
+			}
+			
+			order.setTotalPrice(totalPrice);
 			
 			order.setCustomer(customer);
-			order.setDish(dish);
+			order.setDishes(dishes);
 			
 			return order;
 			
@@ -87,13 +96,15 @@ public class OrderConverter {
 			orderDetailsDto.setTotalPrice(order.getTotalPrice());
 			
 			Customer customer = order.getCustomer();
-			Dish dish = order.getDish();
+			List<Dish> dishes = order.getDishes();
 			
 			CustomerDto customerDto = customerConverter.toDto(customer, CustomerDto.class);
-			DishDto dishDto = dishConverter.toDto(dish, DishDto.class);
+			List<DishDto> dishDtos = dishes.stream()
+					.map( dish-> dishConverter.toDto(dish, DishDto.class))
+					.collect(Collectors.toList());
 			
 			orderDetailsDto.setCustomer(customerDto);
-			orderDetailsDto.setDish(dishDto);
+			orderDetailsDto.setDishes(dishDtos);
 			
 			return dtoClass.cast(orderDetailsDto);
 			

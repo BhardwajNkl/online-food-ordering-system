@@ -1,6 +1,7 @@
 package dev.bhardwaj.food_order.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import dev.bhardwaj.food_order.entity.Order.DeliveryStatus;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ public class OrderDetailsDto {
 	private String deliveryAddress;
 	private DeliveryStatus deliveryStatus;
 	
-	private DishDto dish;
+	private List<DishDto> dishes;
 	
 	private CustomerDto customer;
 }

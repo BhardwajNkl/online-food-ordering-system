@@ -68,11 +68,13 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public List<OrderDto> getOrdersForRestaurant(int restaurantId) {
-		return orderRepository.findAll().stream().filter(order -> {
-			return order.getDish().getRestaurant().getId() == restaurantId;
-		}).map(order -> {
-			return orderConverter.toDto(order, OrderDto.class);
-		}).collect(Collectors.toList());
+		
+		List<Order> orders = orderRepository.findOrdersByRestaurantId(restaurantId);
+		return orders.stream()
+				.map(order -> {
+					return orderConverter.toDto(order, OrderDto.class);
+				}).collect(Collectors.toList());
+		
 	}
 
 	@Override
@@ -99,7 +101,11 @@ public class OrderServiceImpl implements OrderService {
 			billDto.setTotalPrice(order.getTotalPrice());
 			billDto.setDeliveryAddress(order.getDeliveryAddress());
 			billDto.setCustomerName(order.getCustomer().getName());
-			billDto.setDishName(order.getDish().getName());
+			List<String> dishNames = order.getDishes()
+					.stream()
+					.map(dish->dish.getName())
+					.collect(Collectors.toList());
+			billDto.setDishNames(dishNames);
 
 			return billDto;
 		} else {

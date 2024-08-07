@@ -33,9 +33,6 @@ public class Dish {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Restaurant restaurant;
 	
-	@OneToMany(mappedBy = "dish", fetch = FetchType.LAZY)
-	private List<Order> orders;
-	
 	@OneToMany(fetch = FetchType.LAZY)
 	private List<Rating> ratings;
 	

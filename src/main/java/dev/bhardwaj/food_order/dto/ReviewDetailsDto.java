@@ -13,8 +13,6 @@ import lombok.Setter;
 @Setter
 public class ReviewDetailsDto {
 	private long id;
-//	private long customerId;
-//	private int dishId;
 	private String review;
 	private Timestamp timeStamp;
 	

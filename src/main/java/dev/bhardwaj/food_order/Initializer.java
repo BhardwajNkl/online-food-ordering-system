@@ -12,13 +12,9 @@ import dev.bhardwaj.food_order.entity.RoleEntity;
 import dev.bhardwaj.food_order.entity.User;
 import dev.bhardwaj.food_order.repository.RoleRepository;
 import dev.bhardwaj.food_order.repository.UserRepository;
-import dev.bhardwaj.food_order.service.RestaurantService;
 
 @Component
 public class Initializer implements CommandLineRunner {
-
-	@Autowired
-	private RestaurantService restaurantService;
 	
 	@Autowired
 	private RoleRepository roleRepository;
@@ -32,11 +28,6 @@ public class Initializer implements CommandLineRunner {
 	
 	@Override
 	public void run(String... args) throws Exception {
-//		CreateRestaurantDto restaurantDto = new CreateRestaurantDto("my restra", true);
-//		Restaurant restaurant = restaurantService.createRestaurant(restaurantDto);
-//		System.out.println("created restra id: "+restaurant.getId());
-		
-		
 		
 		// save both roles
 		RoleEntity role1 = new RoleEntity();

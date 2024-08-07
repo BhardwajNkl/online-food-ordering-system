@@ -41,11 +41,11 @@ public class ReviewServiceImpl implements ReviewService {
 		// review can be added to ordered dishes only
 		Customer customer = customerRepository.findById(reviewDto.getCustomerId())
 				.orElseThrow(() -> new DoesNotExistException("Customer with given id does not exist"));
+		
+		long hasCustomerOrderedDish = customerRepository.hasCustomerOrderedDish(reviewDto.getCustomerId(), reviewDto.getDishId());
 
-		boolean customerHasOrderedThisDish = customer.getOrders().stream()
-				.anyMatch(order -> order.getDish().getId() == reviewDto.getDishId());
 
-		if (!customerHasOrderedThisDish) {
+		if (hasCustomerOrderedDish==0) {
 			throw new NotAllowedException("Cannot give review! Customer has not ordered this dish!");
 		}
 
