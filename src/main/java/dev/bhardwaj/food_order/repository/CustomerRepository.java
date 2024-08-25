@@ -13,9 +13,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 	@Query(value = "select exists ( " +
             " select 1 from `order` o " +
             " join order_dishes od on o.id = od.order_id " +
-            " join dish d on od.dish_id = d.id " +
             " where o.customer_id = :customerId " +
-            " and d.id = :dishId" +
+            " and od.dish_id = :dishId" +
             ") as ordered", nativeQuery = true)
 	Long hasCustomerOrderedDish(@Param("customerId") Long customerId, @Param("dishId") Integer dishId);
 }

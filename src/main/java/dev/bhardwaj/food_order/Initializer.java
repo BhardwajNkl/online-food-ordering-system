@@ -48,7 +48,6 @@ public class Initializer implements CommandLineRunner {
 		admin.setPassword(passwordEncoder.encode("adminadmin"));
 		RoleEntity roles = roleRepository.findByName("ADMIN_USER").get();
         admin.setRoles(Collections.singletonList(roles));
-		admin.setRoles(Arrays.asList(roles));
 		try {
 			userRepository.save(admin);
 		} catch (Exception e) {
